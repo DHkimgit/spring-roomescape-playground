@@ -1,15 +1,13 @@
-package roomescape;
-
-import jakarta.annotation.Generated;
+package roomescape.domain;
 
 public class Reservation {
     private int id;
 
     private String name;
     private String date;
-    private String time;
+    private Time time;
 
-    public Reservation(int id, String name, String date, String time) {
+    public Reservation(int id, String name, String date, Time time) {
         this.id = id;
         this.name = name;
         this.date = date;
@@ -28,7 +26,11 @@ public class Reservation {
         return date;
     }
 
-    public String getTime() {
+    public Time getTime() {
         return time;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
