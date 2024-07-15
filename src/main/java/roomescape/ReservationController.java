@@ -1,7 +1,9 @@
 package roomescape;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +21,8 @@ import static roomescape.ErrorMessage.*;
 public class ReservationController {
     private final List<Reservation> reservations= new ArrayList<>();
     private final AtomicLong index = new AtomicLong(1);
-
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
     public ReservationController() {
     }
 
@@ -31,24 +34,34 @@ public class ReservationController {
     @GetMapping("/reservations")
     @ResponseBody
     public ResponseEntity<List<Reservation>> reservations(){
-        return new ResponseEntity<>(reservations, HttpStatus.OK);
+        String sql = "SELECT id, name, date, time FROM reservation";
+        List<Reservation> reservation1 = jdbcTemplate.query(
+                sql,
+                (resultSet, rowNum) -> (
+                    new Reservation(
+                            resultSet.getLong("id"),
+                            resultSet.getString("name"),
+                            resultSet.getString("date"),
+                            resultSet.getString("time")
+                    )
+                ));
+        return ResponseEntity.ok(reservation1);
     }
 
     @PostMapping("/reservations")
     public ResponseEntity<Reservation> create(@RequestBody Reservation reservation) {
         validateReservation(reservation);
-        Reservation newReservation = new Reservation(
-                index.getAndIncrement(),
-                reservation.getName(),
-                reservation.getDate(),
-                reservation.getTime()
-        );
+        String sql = "INSERT INTO reservation(name, date, time) VALUES (?, ?, ?)";
+
+        jdbcTemplate.update(sql, reservation.getName(), reservation.getDate(), reservation.getTime());
+
+        Long newReservationId = index.getAndIncrement();
+        Reservation newReservation = new Reservation(newReservationId, reservation.getName(), reservation.getDate(), reservation.getTime());
         reservations.add(newReservation);
 
         return ResponseEntity.created(URI.create("/reservations/" + newReservation.getId()))
                 .body(newReservation);
     }
-
     private void validateReservation(Reservation reservation) {
         if(reservation.getName() == null || reservation.getName().isEmpty()) {
             throw new NotFoundReservationException(NOT_INPUT_NAME.message);
@@ -60,7 +73,13 @@ public class ReservationController {
     }
 
     @DeleteMapping("/reservations/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id){
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        String sql = "DELETE FROM reservation WHERE id = ?";
+        int rowsAffected = jdbcTemplate.update(sql, id);
+        if (rowsAffected == 0) {
+            throw new NotFoundReservationException(NOT_FOUND_RESERVATION.message);
+        }
+
         Reservation reservation = reservations.stream()
                 .filter(it -> Objects.equals(it.getId(), id))
                 .findFirst()
