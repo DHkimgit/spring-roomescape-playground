@@ -1,6 +1,5 @@
 package roomescape.controller;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +10,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-import roomescape.dao.ReservationDAO;
 import roomescape.dto.RequestReservation;
-import roomescape.model.Reservation;
+import roomescape.dto.ResponseReservation;
+import roomescape.service.ReservationService;
 
 import java.util.List;
 
@@ -21,21 +20,21 @@ import static org.springframework.http.HttpStatus.CREATED;
 
 @Controller
 public class ReservationController {
-    private final ReservationDAO reservationDAO;
+    private final ReservationService reservationService;
 
-    public ReservationController(@Qualifier("reservationJdbcDAO") ReservationDAO reservationDAO) {
-        this.reservationDAO = reservationDAO;
+    public ReservationController(ReservationService reservationService) {
+        this.reservationService = reservationService;
     }
 
     @GetMapping("/reservation")
     public String reservation() {
-        return "reservation";
+        return "new-reservation";
     }
 
     @GetMapping("/reservations")
     @ResponseBody
-    public ResponseEntity<List<Reservation>> reservations() {
-        List<Reservation> reservations = reservationDAO.getReservations();
+    public ResponseEntity<List<ResponseReservation>> reservations() {
+        List<ResponseReservation> reservations = reservationService.getReservations();
         return ResponseEntity.status(HttpStatus.OK)
                 .header(HttpHeaders.CONTENT_TYPE, "application/json")
                 .body(reservations);
@@ -43,14 +42,14 @@ public class ReservationController {
 
     @PostMapping("/reservations")
     @ResponseBody
-    public ResponseEntity<Reservation> createReservation(@RequestBody RequestReservation requestReservation) {
+    public ResponseEntity<ResponseReservation> createReservation(@RequestBody RequestReservation requestReservation) {
         String name = requestReservation.name();
         String date = requestReservation.date();
-        String time = requestReservation.time();
-        Reservation newReservation = reservationDAO.saveReservation(name, date, time);
+        long timeId = requestReservation.time();
+        ResponseReservation newReservation = reservationService.createReservation(name, date, timeId);
 
         return ResponseEntity.status(CREATED)
-                .header(HttpHeaders.LOCATION, "/reservations/" + newReservation.getId())
+                .header(HttpHeaders.LOCATION, "/reservations/" + newReservation.id())
                 .header(HttpHeaders.CONTENT_TYPE, "application/json")
                 .body(newReservation);
     }
@@ -58,7 +57,7 @@ public class ReservationController {
     @DeleteMapping("/reservations/{reservationId}")
     @ResponseBody
     public ResponseEntity<Void> deleteReservations(@PathVariable Long reservationId) {
-        reservationDAO.deleteReservation(reservationId);
+        reservationService.deleteReservation(reservationId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .header(HttpHeaders.CONTENT_TYPE, "application/json")
                 .build();

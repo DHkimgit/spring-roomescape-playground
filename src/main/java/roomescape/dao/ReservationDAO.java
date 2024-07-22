@@ -5,7 +5,7 @@ import roomescape.model.Reservation;
 import java.util.List;
 
 public interface ReservationDAO {
-    Reservation saveReservation(String name, String date, String time);
-    List<Reservation> getReservations();
-    void deleteReservation(Long id);
+    Reservation save(String name, String date, Long timeId);
+    List<Reservation> findAll();
+    void deleteById(Long id);
 }
