@@ -27,5 +27,4 @@ public class Reservation {
 
     public String getTime() {
         return time;
-    }
 }
