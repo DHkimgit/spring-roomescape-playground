@@ -1,16 +1,13 @@
-package roomescape.domain;
+package roomescape.dto;
 
-public class Reservation {
+public class ResponseReservationDto {
 
     private Long id;
     private String name;
     private String date;
-    private Time time;
+    private ResponseTimeDto time;
 
-    public Reservation() {
-    }
-  
-    public Reservation(final Long id, final String name, final String date, final Time time) {
+    public ResponseReservationDto(final Long id, final String name, final String date, final ResponseTimeDto time) {
         this.id = id;
         this.name = name;
         this.date = date;
@@ -29,7 +26,7 @@ public class Reservation {
         return date;
     }
 
-    public Time getTime() {
+    public ResponseTimeDto getTime() {
         return time;
     }
 }
