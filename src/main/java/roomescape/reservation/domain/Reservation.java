@@ -1,7 +1,8 @@
-package roomescape.model;
+package roomescape.reservation.domain;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import roomescape.time.domain.Time;
 
 public class Reservation {
     private Long id;
@@ -14,24 +15,26 @@ public class Reservation {
     @NotBlank(message = "date rk 빈문자열입니다.")
     private String date;
 
-    @NotNull(message = "time 이 null 입니다.")
-    @NotBlank(message = "time 이 빈문자열입니다.")
-    private String time;
+    private Time time;
 
     public Reservation() {
     }
 
-    public Reservation(Long id, String name, String date, String time) {
+    public Reservation(Long id, String name, String date, Time time) {
         this.id = id;
         this.name = name;
         this.date = date;
         this.time = time;
     }
 
-    public Reservation(String name, String date, String time) {
+    public Reservation(String name, String date, Time time) {
         this.name = name;
         this.date = date;
         this.time = time;
+    }
+
+    public static Reservation toEntity(Reservation reservation, Long id) {
+        return new Reservation(id, reservation.name, reservation.date, reservation.time);
     }
 
     public Long getId() {
@@ -46,11 +49,7 @@ public class Reservation {
         return date;
     }
 
-    public String getTime() {
+    public Time getTime() {
         return time;
-    }
-
-    public static Reservation toEntity(Reservation reservation, Long id) {
-        return new Reservation(id, reservation.name, reservation.date, reservation.time);
     }
 }
