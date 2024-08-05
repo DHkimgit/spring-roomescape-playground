@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>방탈출 어드민 페이지</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+  <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    .page {
+      display: flex;
+      height: 100vh;
+    }
+    #sidebar-container {
+      width: 250px;
+      background-color: #004d00;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 20px;
+    }
+    #sidebar-container .sidebar-logo {
+      margin-bottom: 20px;
+    }
+    #sidebar-container ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    #sidebar-container ul li {
+      padding: 10px;
+      width: 100%;
+      text-align: center;
+    }
+    #sidebar-container ul li a {
+      color: white;
+      text-decoration: none;
+    }
+    #sidebar-container ul li:hover {
+      background-color: #006400;
+    }
+    #content-container {
+      flex: 1;
+      padding: 20px;
+      background-color: #f0f0f0;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="page">
+  <!-- Sidebar -->
+  <div id="sidebar-container">
+    <div class="sidebar-logo">
+      <a href="/">
+        <img src="https://avatars.githubusercontent.com/u/141792611?s=96&v=4" alt="logo" class="img-fluid rounded-circle">
+      </a>
+    </div>
+    <ul>
+      <li>
+        <i class="fas fa-calendar-check menu-icon mr-2"></i>
+        <a href="/reservation">예약관리</a>
+      </li>
+      <li>
+        <i class="fas fa-clock menu-icon mr-2"></i>
+        <a href="/time">시간관리</a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Content -->
+  <div id="content-container">
+    <h1>어드민 페이지</h1>
+  </div>
+</div>
+
+<script src="/js/scripts.js"></script>
+</body>
+</html>

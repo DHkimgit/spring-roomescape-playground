@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="ko">
-
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,7 +10,6 @@
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="stylesheet" href="/css/reservation.css">
 </head>
-
 <body>
 
 <div class="container-fluid page">
@@ -22,14 +20,13 @@
         <!-- 로고 영역 -->
         <div class="sidebar-logo p-4">
           <a href="/">
-            <img src="https://avatars.githubusercontent.com/u/141792611?s=96&v=4" alt="logo"
-                 class="img-fluid rounded-circle">
+            <img src="https://avatars.githubusercontent.com/u/141792611?s=96&v=4" alt="logo" class="img-fluid rounded-circle">
           </a>
         </div>
         <ul class="list-unstyled mt-4">
           <li class="p-3">
             <i class="fas fa-calendar-check menu-icon mr-2"></i>
-            <a href="/reservation" class="text-white">예약관리</a>
+            <a href="/reservations" class="text-white">예약관리</a>
           </li>
           <li class="p-3">
             <i class="fas fa-clock menu-icon mr-2"></i>
@@ -41,29 +38,142 @@
     <!-- Content -->
     <div id="content-container" class="col-md-9 p-5">
       <h1>예약 관리</h1>
-      <div class="table-header">
-        <button id="add-reservation" class="btn btn-primary">예약 추가</button>
+      <div class="table-header mb-3">
+        <button id="add-row" class="btn btn-primary">예약 추가</button>
       </div>
-      <div class="table-container"/>
-      <table class="table table-bordered">
-        <thead>
-        <tr>
-          <th>예약번호</th>
-          <th>예약자</th>
-          <th>날짜</th>
-          <th>시간</th>
-          <th></th>
-        </tr>
-        </thead>
-        <tbody id="reservation-table-body">
-        </tbody>
-      </table>
+      <div class="table-container">
+        <table class="table table-bordered">
+          <thead>
+          <tr>
+            <th>예약번호</th>
+            <th>예약자</th>
+            <th>날짜</th>
+            <th>시간</th>
+            <th>조치</th>
+          </tr>
+          </thead>
+          <tbody id="reservation-table-body">
+          <!-- 예약 목록이 여기에 추가됩니다 -->
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
 
+<script>
+  // 예약 목록을 가져와서 테이블에 추가하는 함수
+  function loadReservations() {
+    fetch('/reservations') // 올바른 URL 사용
+            .then(response => response.json())
+            .then(data => {
+              const tableBody = document.getElementById('reservation-table-body');
+              tableBody.innerHTML = ''; // 기존 내용을 지우고 새로 추가
+              data.forEach(reservation => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+            <td>${reservation.id}</td>
+            <td>${reservation.name}</td>
+            <td>${reservation.date}</td>
+            <td>${reservation.time}</td>
+            <td>
+              <button class="btn btn-danger btn-sm delete-btn" data-id="${reservation.id}">삭제</button>
+            </td>
+          `;
+                tableBody.appendChild(row);
+              });
+
+              // 삭제 버튼에 이벤트 리스너 추가
+              document.querySelectorAll('.delete-btn').forEach(button => {
+                button.addEventListener('click', event => {
+                  const id = event.target.getAttribute('data-id');
+                  deleteReservation(id);
+                });
+              });
+            })
+            .catch(error => console.error('Error:', error));
+  }
+
+  // 예약 삭제 함수
+  function deleteReservation(id) {
+    fetch(`/reservations/${id}`, {
+      method: 'DELETE'
+    })
+            .then(response => {
+              if (response.ok) {
+                loadReservations(); // 목록 다시 로드
+              } else {
+                console.error('Failed to delete reservation');
+              }
+            })
+            .catch(error => console.error('Error:', error));
+  }
+
+  // 테이블에 새 행 추가 함수
+  document.getElementById('add-row').addEventListener('click', () => {
+    const tableBody = document.getElementById('reservation-table-body');
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td></td>
+      <td><input type="text" class="form-control" id="new-name"></td>
+      <td><input type="date" class="form-control" id="new-date"></td>
+      <td><input type="time" class="form-control" id="new-time"></td>
+      <td>
+        <button class="btn btn-success btn-sm" id="save-new-reservation">확인</button>
+        <button class="btn btn-secondary btn-sm" id="cancel-new-reservation">취소</button>
+      </td>
+    `;
+    tableBody.appendChild(row);
+
+    // 확인 버튼 클릭 이벤트 리스너 추가
+    document.getElementById('save-new-reservation').addEventListener('click', () => {
+      const name = document.getElementById('new-name').value;
+      const date = document.getElementById('new-date').value;
+      const time = document.getElementById('new-time').value;
+
+      // 빈 필드 검증
+      if (!name || !date || !time) {
+        alert('모든 필드를 채워주세요.');
+        return;
+      }
+
+      const reservation = {
+        name: name,
+        date: date,
+        time: time
+      };
+
+      fetch('/reservations/reservation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(reservation)
+      })
+              .then(response => {
+                if (response.status === 400) {
+                  response.text().then(message => alert('잘못된 입력입니다: ' + message));
+                } else if (response.ok) {
+                  loadReservations(); // 새 예약이 추가되면 목록 다시 로드
+                } else {
+                  console.error('Failed to add reservation');
+                }
+              })
+              .catch(error => console.error('Error:', error));
+    });
+
+    // 취소 버튼 클릭 이벤트 리스너 추가
+    document.getElementById('cancel-new-reservation').addEventListener('click', () => {
+      // 새로 추가된 행 삭제
+      tableBody.removeChild(row);
+    });
+  });
+
+  // 페이지 로드 시 예약 목록을 불러옴
+  document.addEventListener('DOMContentLoaded', loadReservations);
+</script>
+
 <script src="/js/scripts.js"></script>
 <script src="/js/reservation.js"></script>
 </body>
-
 </html>
