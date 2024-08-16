@@ -2,8 +2,12 @@ package roomescape.controller;
 
 
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +15,7 @@ import roomescape.domain.Reservation;
 import roomescape.exception.NotFoundReservationException;
 
 import java.net.URI;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -18,6 +23,11 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Controller
 public class ReservationController {
+    private JdbcTemplate jdbcTemplate;
+    @Autowired
+    public ReservationController(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     private AtomicLong index = new AtomicLong(1);
     private List<Reservation> reservations = new ArrayList<>();
@@ -30,29 +40,40 @@ public class ReservationController {
     //예약 조회
     @GetMapping("/reservations")
     public ResponseEntity<List<Reservation>> reservations() {
+        String sql = "SELECT id, name, date, time FROM reservation";
+        List<Reservation> reservations = jdbcTemplate.query(sql,
+                (rs, rowNum) ->
+                        new Reservation(
+                                rs.getLong("id"),
+                                rs.getString("name"),
+                                rs.getString("date"),
+                                rs.getString("time")
+                        )
+        );
         return ResponseEntity.ok().body(reservations);
     }
 
-    // 예약추가
-    // 예외처리
     @PostMapping("/reservations")
     public ResponseEntity<Reservation> createReservation(@Valid @RequestBody Reservation reservation) {
-        Reservation addReservation = reservation.toEntity(index.getAndIncrement(),reservation);
-        reservations.add(addReservation);
-        return ResponseEntity.created(URI.create("/reservations/" + addReservation.getId())).build();
+        String sql =" INSERT INTO reservation(name, date, time) VALUES (?, ?, ?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, new String[] { "id" });
+            ps.setString(1,reservation.getName());
+            ps.setString(2,reservation.getDate());
+            ps.setString(3,reservation.getTime());
+            return ps;
+        }, keyHolder);
+        Long id = keyHolder.getKey().longValue();
+        Reservation newreservation = new Reservation(id, reservation.getName(), reservation.getDate(), reservation.getTime());
+        return ResponseEntity.created(URI.create("/reservations/" + newreservation.getId())).build();
     }
 
 
-    // 예약취소
-    // 예외처리
     @DeleteMapping("/reservations/{id}")
     public ResponseEntity<Void> deleteReservation(@PathVariable Long id){
-        Reservation deleteReservation = reservations.stream()
-                .filter(it->Objects.equals(it.getId(), id))
-                .findFirst()
-                .orElseThrow(() -> new NotFoundReservationException("Reservation not found with id: " + id));
-
-        reservations.remove(deleteReservation);
+        String sql = "DELETE FROM reservation WHERE id = ?";
+        jdbcTemplate.update(sql, Long.valueOf(id));
 
         return ResponseEntity.noContent().build();
     }
