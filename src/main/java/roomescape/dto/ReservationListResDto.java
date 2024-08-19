@@ -1,13 +1,14 @@
 package roomescape.dto;
 
 import roomescape.domain.Reservation;
+import roomescape.domain.Time;
 
-public record ReservationListResDto (
+public record ReservationListResDto(
         Long id,
         String name,
         String date,
-        String time
-){
+        Time time
+) {
     public static ReservationListResDto from(Reservation reservation) {
         return new ReservationListResDto(
                 reservation.getId(),
