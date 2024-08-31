@@ -1,6 +1,7 @@
 package roomescape.dto;
 
 import roomescape.domain.Reservation;
+import roomescape.exception.RequestMissingArgumentException;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -32,6 +33,10 @@ public class ReservationRequestDto {
     }
 
     public Reservation toEntity(Long id) {
+        if(this.name == null || this.name.trim().isEmpty() || this.date == null || this.time == null) {
+            throw new RequestMissingArgumentException();
+        }
+
         return new Reservation(id, this.name, this.date.toString(), this.time.toString());
     }
 }

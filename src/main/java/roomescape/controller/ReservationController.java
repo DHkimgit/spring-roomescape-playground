@@ -1,16 +1,17 @@
 package roomescape.controller;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import roomescape.domain.Reservation;
 import roomescape.dto.ReservationRequestDto;
 import roomescape.dto.ReservationResponseDto;
+import roomescape.exception.RequestMissingArgumentException;
+import roomescape.exception.ReservationNotFoundException;
 
 import java.net.URI;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -44,11 +45,21 @@ public class ReservationController {
         Reservation findReservation = reservations.stream()
                 .filter(iter -> Objects.equals(iter.getId(), id))
                 .findFirst()
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(ReservationNotFoundException::new);
 
         reservations.remove(findReservation);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @ExceptionHandler(ReservationNotFoundException.class)
+    public ResponseEntity<Void> handleReservationNotFound(ReservationNotFoundException e) {
+        return ResponseEntity.status(HttpStatusCode.valueOf(400)).build();
+    }
+
+    @ExceptionHandler(RequestMissingArgumentException.class)
+    public ResponseEntity<Void> handleRequestMissingArgument(RequestMissingArgumentException e) {
+        return ResponseEntity.status(HttpStatusCode.valueOf(400)).build();
     }
 
 }
