@@ -3,13 +3,17 @@ package roomescape.controller;
 import jakarta.annotation.PostConstruct;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 import roomescape.domain.Reservation;
+import roomescape.dto.ReservationRequestDto;
+import roomescape.dto.ReservationResponseDto;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Controller
@@ -19,12 +23,32 @@ public class ReservationController {
 
     @PostConstruct
     public void initData() {
-        reservations.add(new Reservation(index.incrementAndGet(), "브라운", LocalDate.of(2023, 1, 1), LocalTime.of(10, 0)));
-        reservations.add(new Reservation(index.incrementAndGet(), "브라운", LocalDate.of(2023, 1, 2), LocalTime.of(11, 0)));
+        reservations.add(new Reservation(index.incrementAndGet(), "브라운", "2023-01-01", "10:00"));
+        reservations.add(new Reservation(index.incrementAndGet(), "브라운", "2023-01-02", "11:00"));
     }
 
     @GetMapping("/reservations")
     public ResponseEntity<List<Reservation>> getReservations() {
         return ResponseEntity.ok().body(reservations);
     }
+
+    @PostMapping("/reservations")
+    public ResponseEntity<ReservationResponseDto> addReservation(@RequestBody ReservationRequestDto requestDto) {
+        Reservation newReservation = requestDto.toEntity(index.incrementAndGet());
+        reservations.add(newReservation);
+        return ResponseEntity.created(URI.create("/reservations/" + newReservation.getId())).body(new ReservationResponseDto(newReservation));
+    }
+
+    @DeleteMapping("/reservations/{id}")
+    public ResponseEntity<Void> removeReservation(@PathVariable Long id) {
+        Reservation findReservation = reservations.stream()
+                .filter(iter -> Objects.equals(iter.getId(), id))
+                .findFirst()
+                .orElseThrow(RuntimeException::new);
+
+        reservations.remove(findReservation);
+
+        return ResponseEntity.noContent().build();
+    }
+
 }
