@@ -10,4 +10,9 @@ public class AdminViewController {
         return "home";
     }
 
+    @GetMapping(value = "/reservation")
+    public String reservation() {
+        return "reservation";
+    }
+
 }
