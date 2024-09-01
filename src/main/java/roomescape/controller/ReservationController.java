@@ -18,6 +18,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Controller
+@RequestMapping("/reservations")
 public class ReservationController {
     private List<Reservation> reservations = new ArrayList<>();
     private AtomicLong index = new AtomicLong(0);
@@ -28,19 +29,19 @@ public class ReservationController {
         reservations.add(new Reservation(index.incrementAndGet(), "브라운", "2023-01-02", "11:00"));
     }
 
-    @GetMapping("/reservations")
+    @GetMapping
     public ResponseEntity<List<Reservation>> getReservations() {
         return ResponseEntity.ok().body(reservations);
     }
 
-    @PostMapping("/reservations")
+    @PostMapping
     public ResponseEntity<ReservationResponseDto> addReservation(@RequestBody ReservationRequestDto requestDto) {
         Reservation newReservation = requestDto.toEntity(index.incrementAndGet());
         reservations.add(newReservation);
         return ResponseEntity.created(URI.create("/reservations/" + newReservation.getId())).body(new ReservationResponseDto(newReservation));
     }
 
-    @DeleteMapping("/reservations/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> removeReservation(@PathVariable Long id) {
         Reservation findReservation = reservations.stream()
                 .filter(iter -> Objects.equals(iter.getId(), id))
