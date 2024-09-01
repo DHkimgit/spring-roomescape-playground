@@ -54,15 +54,4 @@ public class ReservationController {
 
         return ResponseEntity.noContent().build();
     }
-
-    @ExceptionHandler(ReservationNotFoundException.class)
-    public ResponseEntity<Void> handleReservationNotFound(ReservationNotFoundException e) {
-        return ResponseEntity.status(HttpStatusCode.valueOf(400)).build();
-    }
-
-    @ExceptionHandler(RequestMissingArgumentException.class)
-    public ResponseEntity<Void> handleRequestMissingArgument(RequestMissingArgumentException e) {
-        return ResponseEntity.status(HttpStatusCode.valueOf(400)).build();
-    }
-
 }
