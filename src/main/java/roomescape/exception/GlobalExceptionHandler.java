@@ -16,4 +16,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Void> handleRequestMissingArgument(RequestMissingArgumentException e) {
         return ResponseEntity.status(HttpStatusCode.valueOf(400)).build();
     }
+
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<String> handleNullPointerException(NullPointerException ex) {
+        return ResponseEntity.status(HttpStatusCode.valueOf(400)).build();
+    }
 }

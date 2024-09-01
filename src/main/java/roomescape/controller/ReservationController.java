@@ -31,7 +31,7 @@ public class ReservationController {
     @GetMapping
     public ResponseEntity<List<ReservationResponseDto>> getReservations() {
         List<ReservationResponseDto> result = reservations.stream()
-                .map(ReservationResponseDto::new)
+                .map(ReservationResponseDto::from)
                 .toList();
         return ResponseEntity.ok().body(result);
     }
@@ -40,7 +40,7 @@ public class ReservationController {
     public ResponseEntity<ReservationResponseDto> addReservation(@RequestBody ReservationRequestDto requestDto) {
         Reservation newReservation = requestDto.toEntity(index.incrementAndGet());
         reservations.add(newReservation);
-        return ResponseEntity.created(URI.create("/reservations/" + newReservation.getId())).body(new ReservationResponseDto(newReservation));
+        return ResponseEntity.created(URI.create("/reservations/" + newReservation.getId())).body(ReservationResponseDto.from(newReservation));
     }
 
     @DeleteMapping("/{id}")

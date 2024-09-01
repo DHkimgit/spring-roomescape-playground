@@ -5,38 +5,20 @@ import roomescape.exception.RequestMissingArgumentException;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Objects;
 
-public class ReservationRequestDto {
-    private LocalDate date;
-    private String name;
-    private LocalTime time;
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public LocalTime getTime() {
-        return time;
-    }
-
-    public ReservationRequestDto() {
-    }
-
-    public ReservationRequestDto(LocalDate date, String name, LocalTime time) {
-        this.date = date;
-        this.name = name;
-        this.time = time;
+public record ReservationRequestDto (LocalDate date, String name, LocalTime time) {
+    // compact 생성자에서 데이터 검증
+    public ReservationRequestDto {
+        Objects.requireNonNull(date);
+        Objects.requireNonNull(name);
+        if (name.trim().isEmpty()) {
+            throw new RequestMissingArgumentException();
+        }
+        Objects.requireNonNull(time);
     }
 
     public Reservation toEntity(Long id) {
-        if(this.name == null || this.name.trim().isEmpty() || this.date == null || this.time == null) {
-            throw new RequestMissingArgumentException();
-        }
-
         return new Reservation(id, this.name, this.date.toString(), this.time.toString());
     }
 }
