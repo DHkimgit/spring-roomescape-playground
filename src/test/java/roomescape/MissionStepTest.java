@@ -9,6 +9,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
@@ -91,5 +92,21 @@ public class MissionStepTest {
                 .when().delete("/reservations/4")
                 .then().log().all()
                 .statusCode(400);
+    }
+
+    @Test
+    void 형식에_맞지_않는_값_제공() {
+        Map<String, String> params = new HashMap<>();
+        params.put("name", "브라운");
+        params.put("date", "hahahaha");
+        params.put("time", "15:40");
+
+        RestAssured.given().log().all()
+                .contentType(ContentType.JSON)
+                .body(params)
+                .when().post("/reservations")
+                .then().log().all()
+                .statusCode(400) // 400 Bad Request 응답 확인
+                .body("message", equalTo("Text 'hahahaha' could not be parsed at index 0"));
     }
 }
