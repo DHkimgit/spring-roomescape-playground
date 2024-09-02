@@ -16,10 +16,10 @@ public record ReservationResponseDto(
 
     public static ReservationResponseDto from(Reservation entity) {
         return new ReservationResponseDto(
-                entity.getId(),
-                entity.getName(),
-                entity.getDate(),
-                entity.getTime()
+            entity.getId(),
+            entity.getName(),
+            entity.getDate(),
+            entity.getTime()
         );
     }
 }
