@@ -3,13 +3,16 @@ package roomescape.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import roomescape.dto.ReservationResponseDto;
+import roomescape.domain.Reservation;
+import roomescape.dto.ReservationRequest;
+import roomescape.dto.ReservationResponse;
+import roomescape.exception.ReservationNotFoundException;
 import roomescape.repository.ReservationRepository;
 
 import java.util.List;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
@@ -19,10 +22,27 @@ public class ReservationService {
         this.reservationRepository = reservationRepository;
     }
 
-    public List<ReservationResponseDto> getReservations() {
+    public List<ReservationResponse> getReservations() {
         var reservations = reservationRepository.findAll();
         return reservations.stream()
-                .map(ReservationResponseDto::from)
+                .map(ReservationResponse::from)
                 .toList();
+    }
+
+    @Transactional
+    public Reservation createReservation(ReservationRequest reservationRequest) {
+        return reservationRepository.save(
+            new Reservation.Builder()
+                .name(reservationRequest.name())
+                .date(reservationRequest.date())
+                .time(reservationRequest.time())
+                .build()
+        );
+    }
+
+    @Transactional
+    public void deleteReservation(Long id) {
+        Reservation findReservation = reservationRepository.findById(id).orElseThrow(ReservationNotFoundException::new);
+        reservationRepository.delete(findReservation);
     }
 }

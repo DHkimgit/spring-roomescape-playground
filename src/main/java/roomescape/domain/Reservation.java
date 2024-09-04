@@ -15,11 +15,42 @@ public class Reservation {
     public Reservation() {
     }
 
-    public Reservation(Long id, String name, String date, String time) {
-        this.id = id;
-        this.name = name;
-        this.date = LocalDate.parse(date);
-        this.time = LocalTime.parse(time);
+    public Reservation(Builder builder) {
+        this.id = builder.id;
+        this.name = builder.name;
+        this.date = builder.date;
+        this.time = builder.time;
+    }
+
+    public static class Builder {
+        private Long id;
+        private String name;
+        private LocalDate date;
+        private LocalTime time;
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder date(LocalDate date) {
+            this.date = date;
+            return this;
+        }
+
+        public Builder time(LocalTime time) {
+            this.time = time;
+            return this;
+        }
+
+        public Reservation build() {
+            return new Reservation(this);
+        }
     }
 
     public Long getId() {

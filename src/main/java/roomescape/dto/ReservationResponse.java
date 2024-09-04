@@ -6,7 +6,7 @@ import roomescape.domain.Reservation;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public record ReservationResponseDto(
+public record ReservationResponse(
         Long id,
         String name,
         LocalDate date,
@@ -14,8 +14,8 @@ public record ReservationResponseDto(
         LocalTime time
 ) {
 
-    public static ReservationResponseDto from(Reservation entity) {
-        return new ReservationResponseDto(
+    public static ReservationResponse from(Reservation entity) {
+        return new ReservationResponse(
             entity.getId(),
             entity.getName(),
             entity.getDate(),

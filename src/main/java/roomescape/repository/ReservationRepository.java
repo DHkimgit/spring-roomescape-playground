@@ -1,40 +1,17 @@
 package roomescape.repository;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
 import roomescape.domain.Reservation;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
-@Repository
-public class ReservationRepository {
+public interface ReservationRepository {
 
-    private final JdbcTemplate jdbcTemplate;
+    List<Reservation> findAll();
 
-    @Autowired
-    public ReservationRepository(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
+    Optional<Reservation> findById(Long id);
 
-    private final RowMapper<Reservation> reservationRowMapper = (resultSet, rowNum) -> {
-        return new Reservation(
-                resultSet.getLong("id"),
-                resultSet.getString("name"),
-                resultSet.getString("date"),
-                resultSet.getString("time")
-        );
-    };
+    Reservation save(Reservation reservation);
 
-    public List<Reservation> findAll() {
-        String sql = "SELECT * FROM reservation";
-        try {
-            jdbcTemplate.query(sql, reservationRowMapper);
-        } catch (Exception e) {
-            return Collections.emptyList();
-        }
-        return jdbcTemplate.query(sql, reservationRowMapper);
-    }
+    void delete(Reservation reservation);
 }
