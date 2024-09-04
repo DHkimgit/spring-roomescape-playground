@@ -4,7 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import roomescape.domain.Reservation;
-import roomescape.dto.ReservationRequest;
+import roomescape.dto.ReservationCreateCommand;
+import roomescape.dto.ReservationCreateRequest;
 import roomescape.dto.ReservationResponse;
 import roomescape.exception.ReservationNotFoundException;
 import roomescape.repository.ReservationRepository;
@@ -30,12 +31,12 @@ public class ReservationService {
     }
 
     @Transactional
-    public Reservation createReservation(ReservationRequest reservationRequest) {
+    public Reservation createReservation(ReservationCreateCommand reservationCreateRequest) {
         return reservationRepository.save(
             new Reservation.Builder()
-                .name(reservationRequest.name())
-                .date(reservationRequest.date())
-                .time(reservationRequest.time())
+                .name(reservationCreateRequest.name())
+                .date(reservationCreateRequest.date())
+                .time(reservationCreateRequest.time())
                 .build()
         );
     }

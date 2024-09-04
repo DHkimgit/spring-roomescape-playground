@@ -4,7 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import roomescape.domain.Reservation;
-import roomescape.dto.ReservationRequest;
+import roomescape.dto.ReservationCreateCommand;
+import roomescape.dto.ReservationCreateRequest;
 import roomescape.dto.ReservationResponse;
 import roomescape.service.ReservationService;
 
@@ -28,9 +29,12 @@ public class ReservationController {
     }
 
     @PostMapping
-    public ResponseEntity<ReservationResponse> addReservation(@RequestBody ReservationRequest requestDto) {
-        Reservation newReservation = reservationService.createReservation(requestDto);
-        return ResponseEntity.created(URI.create("/reservations/" + newReservation.getId())).body(ReservationResponse.from(newReservation));
+    public ResponseEntity<ReservationResponse> addReservation(@RequestBody ReservationCreateRequest req) {
+        Reservation newReservation = reservationService.createReservation(
+            new ReservationCreateCommand(req.name(), req.date(), req.time())
+        );
+        return ResponseEntity.created(URI.create("/reservations/" + newReservation.getId()))
+            .body(ReservationResponse.from(newReservation));
     }
 
     @DeleteMapping("/{id}")

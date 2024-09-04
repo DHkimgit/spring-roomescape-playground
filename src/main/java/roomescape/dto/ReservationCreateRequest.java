@@ -6,13 +6,13 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
 
-public record ReservationRequest(
+public record ReservationCreateRequest(
         LocalDate date,
         String name,
         LocalTime time
 ) {
 
-    public ReservationRequest {
+    public ReservationCreateRequest {
         Objects.requireNonNull(date);
         Objects.requireNonNull(name);
         if (name.trim().isEmpty()) {
