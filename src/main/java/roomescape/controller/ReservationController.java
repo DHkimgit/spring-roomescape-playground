@@ -1,6 +1,7 @@
 package roomescape.controller;
 
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +10,7 @@ import roomescape.dto.ReservationRequestDto;
 import roomescape.dto.ReservationResponseDto;
 import roomescape.exception.RequestMissingArgumentException;
 import roomescape.exception.ReservationNotFoundException;
+import roomescape.service.ReservationService;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -21,6 +23,12 @@ import java.util.concurrent.atomic.AtomicLong;
 public class ReservationController {
     private List<Reservation> reservations = new ArrayList<>();
     private AtomicLong index = new AtomicLong(0);
+    private ReservationService reservationService;
+
+    @Autowired
+    public ReservationController(ReservationService reservationService) {
+        this.reservationService = reservationService;
+    }
 
     @PostConstruct
     public void initData() {
@@ -30,10 +38,8 @@ public class ReservationController {
 
     @GetMapping
     public ResponseEntity<List<ReservationResponseDto>> getReservations() {
-        List<ReservationResponseDto> result = reservations.stream()
-                .map(ReservationResponseDto::from)
-                .toList();
-        return ResponseEntity.ok().body(result);
+        var response = reservationService.getReservations();
+        return ResponseEntity.ok().body(response);
     }
 
     @PostMapping
