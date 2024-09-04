@@ -5,8 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import roomescape.domain.Reservation;
 import roomescape.dto.ReservationCreateCommand;
-import roomescape.dto.ReservationCreateRequest;
-import roomescape.dto.ReservationResponse;
 import roomescape.exception.ReservationNotFoundException;
 import roomescape.repository.ReservationRepository;
 
@@ -23,11 +21,8 @@ public class ReservationService {
         this.reservationRepository = reservationRepository;
     }
 
-    public List<ReservationResponse> getReservations() {
-        var reservations = reservationRepository.findAll();
-        return reservations.stream()
-                .map(ReservationResponse::from)
-                .toList();
+    public List<Reservation> getReservations() {
+        return reservationRepository.findAll();
     }
 
     @Transactional
