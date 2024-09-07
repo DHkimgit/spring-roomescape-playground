@@ -30,7 +30,7 @@ public class ReservationController {
     }
 
     @PostMapping
-    public ResponseEntity<ReservationResponse> addReservation(
+    public ResponseEntity<ReservationResponse> createReservation(
         @RequestBody ReservationCreateRequest req
     ) {
         Reservation newReservation = reservationService.createReservation(
