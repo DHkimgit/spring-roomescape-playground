@@ -15,4 +15,9 @@ public class AdminViewController {
     public String reservation() {
         return "reservation";
     }
+
+    @GetMapping(value = "/time")
+    public String timeSlot() {
+        return "time";
+    }
 }
