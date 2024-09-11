@@ -4,9 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import roomescape.domain.Reservation;
+import roomescape.domain.TimeSlot;
 import roomescape.dto.ReservationCreateCommand;
 import roomescape.exception.ReservationNotFoundException;
+import roomescape.exception.TimeSlotNotFoundException;
 import roomescape.repository.ReservationRepository;
+import roomescape.repository.TimeSlotRepository;
 
 import java.util.List;
 
@@ -15,10 +18,15 @@ import java.util.List;
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
+    private final TimeSlotRepository timeSlotRepository;
 
     @Autowired
-    public ReservationService(ReservationRepository reservationRepository) {
+    public ReservationService(
+        ReservationRepository reservationRepository,
+        TimeSlotRepository timeSlotRepository
+    ) {
         this.reservationRepository = reservationRepository;
+        this.timeSlotRepository = timeSlotRepository;
     }
 
     public List<Reservation> getReservations() {
@@ -26,12 +34,15 @@ public class ReservationService {
     }
 
     @Transactional
-    public Reservation createReservation(ReservationCreateCommand reservationCreateRequest) {
+    public Reservation createReservation(ReservationCreateCommand req) {
+        TimeSlot timeSlot = timeSlotRepository.findById(req.time())
+            .orElseThrow(TimeSlotNotFoundException::new);
+
         return reservationRepository.save(
             new Reservation.Builder()
-                .name(reservationCreateRequest.name())
-                .date(reservationCreateRequest.date())
-                .time(reservationCreateRequest.time())
+                .name(req.name())
+                .date(req.date())
+                .time(timeSlot)
                 .build()
         );
     }

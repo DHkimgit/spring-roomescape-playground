@@ -56,8 +56,14 @@ public class JdbcTimeSlotRepository implements TimeSlotRepository {
 
     public Optional<TimeSlot> findById(Long id) {
         String sql = "SELECT * FROM time WHERE id = ?";
-        List<TimeSlot> timeSlots = jdbcTemplate.query(sql, timeSlotRowMapper, id);
-        return timeSlots.stream().findAny();
+        List<TimeSlot> timeSlot = jdbcTemplate.query(sql, timeSlotRowMapper, id);
+        return timeSlot.stream().findAny();
+    }
+
+    public Optional<TimeSlot> findByTime(LocalTime time) {
+        String sql = "SELECT * FROM time WHERE time = ?";
+        List<TimeSlot> timeSlot = jdbcTemplate.query(sql, timeSlotRowMapper, time);
+        return timeSlot.stream().findAny();
     }
 
     @Override

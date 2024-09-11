@@ -9,8 +9,7 @@ public class Reservation {
     private Long id;
     private String name;
     private LocalDate date;
-    @JsonFormat(pattern = "HH:mm")
-    private LocalTime time;
+    private TimeSlot time;
 
     public Reservation() {
     }
@@ -26,7 +25,7 @@ public class Reservation {
         private Long id;
         private String name;
         private LocalDate date;
-        private LocalTime time;
+        private TimeSlot time;
 
         public Builder id(Long id) {
             this.id = id;
@@ -43,7 +42,7 @@ public class Reservation {
             return this;
         }
 
-        public Builder time(LocalTime time) {
+        public Builder time(TimeSlot time) {
             this.time = time;
             return this;
         }
@@ -65,7 +64,7 @@ public class Reservation {
         return date;
     }
 
-    public LocalTime getTime() {
+    public TimeSlot getTimeSlot() {
         return time;
     }
 }

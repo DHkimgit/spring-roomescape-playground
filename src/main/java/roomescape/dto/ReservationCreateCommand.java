@@ -6,7 +6,7 @@ import java.time.LocalTime;
 public record ReservationCreateCommand (
     String name,
     LocalDate date,
-    LocalTime time
+    Long time
 ){
 
 }

@@ -9,7 +9,7 @@ import java.util.Objects;
 public record ReservationCreateRequest(
         LocalDate date,
         String name,
-        LocalTime time
+        Long time
 ) {
 
     public ReservationCreateRequest {

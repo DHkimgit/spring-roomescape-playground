@@ -17,6 +17,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatusCode.valueOf(400)).build();
     }
 
+    @ExceptionHandler(TimeSlotNotFoundException.class)
+    protected final ResponseEntity<Void> handleTimeSlotNotFound(TimeSlotNotFoundException e) {
+        return ResponseEntity.status(HttpStatusCode.valueOf(400)).build();
+    }
+
     @ExceptionHandler(RequestMissingArgumentException.class)
     protected final ResponseEntity<Void> handleRequestMissingArgument(RequestMissingArgumentException e) {
         return ResponseEntity.status(HttpStatusCode.valueOf(400)).build();
