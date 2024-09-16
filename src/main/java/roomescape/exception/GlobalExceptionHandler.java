@@ -13,22 +13,22 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ReservationNotFoundException.class)
-    protected final ResponseEntity<Void> handleReservationNotFound(ReservationNotFoundException e) {
+    protected final ResponseEntity<Void> handleReservationNotFoundException(ReservationNotFoundException e) {
         return ResponseEntity.status(HttpStatusCode.valueOf(400)).build();
     }
 
     @ExceptionHandler(TimeSlotNotFoundException.class)
-    protected final ResponseEntity<Void> handleTimeSlotNotFound(TimeSlotNotFoundException e) {
+    protected final ResponseEntity<Void> handleTimeSlotNotFoundException(TimeSlotNotFoundException e) {
         return ResponseEntity.status(HttpStatusCode.valueOf(400)).build();
     }
 
     @ExceptionHandler(RequestMissingArgumentException.class)
-    protected final ResponseEntity<Void> handleRequestMissingArgument(RequestMissingArgumentException e) {
+    protected final ResponseEntity<Void> handleRequestMissingArgumentException(RequestMissingArgumentException e) {
         return ResponseEntity.status(HttpStatusCode.valueOf(400)).build();
     }
 
     @ExceptionHandler(NullPointerException.class)
-    protected final ResponseEntity<String> handleNullPointerException(NullPointerException ex) {
+    protected final ResponseEntity<String> handleNullPointerExceptionException(NullPointerException ex) {
         return ResponseEntity.status(HttpStatusCode.valueOf(400)).build();
     }
 
