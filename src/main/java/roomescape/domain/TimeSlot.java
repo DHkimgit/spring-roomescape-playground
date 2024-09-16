@@ -28,7 +28,9 @@ public class TimeSlot {
             return this;
         }
 
-        public TimeSlot build() {return new TimeSlot(this);}
+        public TimeSlot build() {
+            return new TimeSlot(this);
+        }
     }
 
     public Long getId() {

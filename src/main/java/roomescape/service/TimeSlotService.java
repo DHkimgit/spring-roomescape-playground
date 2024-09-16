@@ -21,7 +21,9 @@ public class TimeSlotService {
         this.timeSlotRepository = timeSlotRepository;
     }
 
-    public List<TimeSlot> getTimeSlots() { return timeSlotRepository.findAll(); }
+    public List<TimeSlot> getTimeSlots() {
+        return timeSlotRepository.findAll();
+    }
 
     @Transactional
     public TimeSlot createTimeSlot(TimeSlotCreateCommand request) {
