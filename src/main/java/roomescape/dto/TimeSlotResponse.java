@@ -12,10 +12,10 @@ public record TimeSlotResponse (
     LocalTime time
 ){
 
-    public static TimeSlotResponse from(TimeSlot entity) {
+    public static TimeSlotResponse from(TimeSlot timeSlot) {
         return new TimeSlotResponse(
-            entity.getId(),
-            entity.getTime()
+            timeSlot.getId(),
+            timeSlot.getTime()
         );
     }
 }

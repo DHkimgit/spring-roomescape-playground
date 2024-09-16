@@ -14,12 +14,12 @@ public record ReservationResponse(
         TimeSlotResponse time
 ) {
 
-    public static ReservationResponse from(Reservation entity) {
+    public static ReservationResponse from(Reservation reservation) {
         return new ReservationResponse(
-            entity.getId(),
-            entity.getName(),
-            entity.getDate(),
-            TimeSlotResponse.from(entity.getTimeSlot())
+            reservation.getId(),
+            reservation.getName(),
+            reservation.getDate(),
+            TimeSlotResponse.from(reservation.getTimeSlot())
         );
     }
 }
