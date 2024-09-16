@@ -31,7 +31,7 @@ public class TimeSlotController {
     @GetMapping
     public ResponseEntity<List<TimeSlotResponse>> getTimeSlots() {
         List<TimeSlot> timeSlots = timeSlotService.getTimeSlots();
-        var response = timeSlots.stream().map(TimeSlotResponse::from).toList();
+        List<TimeSlotResponse> response = timeSlots.stream().map(TimeSlotResponse::from).toList();
         return ResponseEntity.ok().body(response);
     }
 

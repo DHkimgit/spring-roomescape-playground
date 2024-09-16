@@ -26,7 +26,7 @@ public class ReservationController {
     @GetMapping
     public ResponseEntity<List<ReservationResponse>> getReservations() {
         List<Reservation> reservations = reservationService.getReservations();
-        var response = reservations.stream().map(ReservationResponse::from).toList();
+        List<ReservationResponse> response = reservations.stream().map(ReservationResponse::from).toList();
         return ResponseEntity.ok().body(response);
     }
 
